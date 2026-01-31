@@ -45,8 +45,18 @@
 }
 
 :root {
+  --primary-green: #2d5016;
+  --secondary-green: #4a7c2c;
+  --light-green: #7fa650;
+  --accent-gold: #c9a961;
+  --bg-light: #fdfcf7;
+  --bg-cream: #f5f3eb;
+  --text-dark: #1a1a1a;
+  --text-muted: #6b7280;
+  --border-light: #e5e3d8;
+  --shadow: rgba(45, 80, 22, 0.1);
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
+  --background: linear-gradient(135deg, var(--bg-light) 0%, var(--bg-cream) 100%);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
@@ -117,6 +127,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
