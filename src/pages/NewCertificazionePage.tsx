@@ -1,27 +1,34 @@
+import PageHeader from "@/components/PageHeader";
 import { FieldGroup, FieldSet, Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
 
 const NewCertificazionePage = () => {
     return (
-        <div className="flex flex-row gap-4 bg-white p-4 rounded-lg shadow-lg w-auto m-4">
-            <FieldSet className="flex-1">
-                <FieldGroup>
-                    <Field>
-                        <FieldLabel htmlFor="name">Full name</FieldLabel>
-                        <Input id="name" autoComplete="off" placeholder="Evil Rabbit" />
-                    </Field>
-                </FieldGroup>
-            </FieldSet>
-            <FieldSet className="flex-1">
-                <FieldGroup>
-                    <Field>
-                        <FieldLabel htmlFor="name">Full name</FieldLabel>
-                        <Input id="name" autoComplete="off" placeholder="Evil Rabbit" />
-                    </Field>
-                </FieldGroup>
-            </FieldSet>
-        </div>
+        <>
+            <PageHeader
+                pageTitle="New Certification"
+                pageSubtitle="Insert data to create a new certification"
+            />
+            <div className="flex flex-row gap-4 bg-white p-4 rounded-lg shadow-lg w-auto m-4">
+                <FieldSet className="flex-1">
+                    <FieldGroup>
+                        <Field>
+                            <FieldLabel htmlFor="name">Full name</FieldLabel>
+                            <Input id="name" autoComplete="off" placeholder="Evil Rabbit" />
+                        </Field>
+                    </FieldGroup>
+                </FieldSet>
+                <FieldSet className="flex-1">
+                    <FieldGroup>
+                        <Field>
+                            <FieldLabel htmlFor="name">Full name</FieldLabel>
+                            <Input id="name" autoComplete="off" placeholder="Evil Rabbit" />
+                        </Field>
+                    </FieldGroup>
+                </FieldSet>
+            </div>
+        </>
     );
 };
 
