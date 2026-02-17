@@ -1,11 +1,16 @@
 import PageHeader from "@/components/PageHeader";
 import type { ActionButton } from "@/types";
+import { useNavigate } from "react-router-dom";
 
 const CertificazioniPage = () => {
+	const navigate = useNavigate();
+
 	const actionBtns: ActionButton[] = [
 		{
 			label: "+ Nuova Certificazione",
-			onClick: () => {},
+			onClick: () => {
+				navigate("/new-certificazione");
+			},
 			variant: "default",
 			size: "lg",
 		},
