@@ -10,7 +10,7 @@ const Navbar = () => {
 	return (
 		<header>
 			<div className="header-content">
-				<div className="logo">CERTOIL</div>
+				<div className="logo">CertOIL</div>
 				<nav>
 					<Link to={"/"} className={getActiveClassByPath("/")}>
 						Home
@@ -19,7 +19,7 @@ const Navbar = () => {
 						to={"/certificazioni"}
 						className={getActiveClassByPath("/certificazioni")}
 					>
-						Certificazioni
+						Certification
 					</Link>
 				</nav>
 			</div>

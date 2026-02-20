@@ -7,7 +7,7 @@ const CertificazioniPage = () => {
 
 	const actionBtns: ActionButton[] = [
 		{
-			label: "+ Nuova Certificazione",
+			label: "+ New Certification",
 			onClick: () => {
 				navigate("/new-certificazione");
 			},
@@ -18,8 +18,8 @@ const CertificazioniPage = () => {
 
 	return (
 		<PageHeader
-			pageTitle="Certificazioni Oli"
-			pageSubtitle="Gestisci e monitora tutte le certificazioni di qualità"
+			pageTitle="Oil Certifications"
+			pageSubtitle="Manage and monitor all your quality certifications"
 			actionBtns={actionBtns}
 		/>
 	);
