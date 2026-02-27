@@ -41,10 +41,10 @@ header {
     gap: 0.5rem;
 }
 
-.logo::before {
+/* .logo::before {
     content: '🫒';
     font-size: 1.8rem;
-}
+} */
 
 nav {
     display: flex;
@@ -174,4 +174,21 @@ main {
     nav {
         gap: 1rem;
     }
+}
+
+
+.border-primary{
+    border-color: var(--primary-green);
+}
+
+.text-primary{
+    color: var(--primary-green)
+}
+
+.border-secondary{
+    border-color: var(--secondary-green);
+}
+
+.text-secondary{
+    color: var(--secondary-green)
 }

@@ -15,14 +15,14 @@ import { useMemo, useRef, useState } from "react";
 const POST_URL = "http://localhost:3005/api/certifications";
 const MAX_FILE_MB = 10;
 const MAX_FILE_BYTES = MAX_FILE_MB * 1024 * 1024;
-const ACCEPTED_MIME = ["application/pdf", "image/jpeg", "image/png"] as const;
-const ACCEPT_ATTR = ".pdf,.jpg,.jpeg,.png";
+const ACCEPTED_MIME = ["application/pdf"] as const;
+const ACCEPT_ATTR = ".pdf";
 
 type Scheme = "EVOO" | "BIO" | "DOP" | "IGP" | "ALTRO";
 type ProductClass = "extravergine" | "vergine" | "biologico" | "dop" | "igp";
 
 type OilDataItem = {
-  name: "Acidità" | "Perossidi" | "Polifenoli";
+  name: string
   value: string; // keep as string like your example
   unit: string;
 };
@@ -354,7 +354,7 @@ export default function NewCertificazionePage() {
           <form className="space-y-10" onSubmit={onSubmit}>
             {/* ========= BASIC (optional UI fields you already had) ========= */}
             <section>
-              <h2 className="text-xl font-semibold text-emerald-900 pb-3 border-b-2 border-emerald-200">Basic</h2>
+              <h2 className="text-xl font-semibold text-secondary pb-3 border-b-2 border-secondary">Basic</h2>
 
               <FieldSet className="mt-6">
                 <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -400,7 +400,7 @@ export default function NewCertificazionePage() {
 
             {/* ========= OIL DATA ========= */}
             <section>
-              <h2 className="text-xl font-semibold text-emerald-900 pb-3 border-b-2 border-emerald-200">Oil data</h2>
+              <h2 className="text-xl font-semibold text-secondary pb-3 border-b-2 border-secondary">Oil data</h2>
 
               <FieldSet className="mt-6">
                 <FieldGroup className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -463,7 +463,7 @@ export default function NewCertificazionePage() {
 
             {/* ========= COMPANY DATA ========= */}
             <section>
-              <h2 className="text-xl font-semibold text-emerald-900 pb-3 border-b-2 border-emerald-200">Company data</h2>
+              <h2 className="text-xl font-semibold text-secondary pb-3 border-b-2 border-secondary">Company data</h2>
 
               <FieldSet className="mt-6">
                 <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -620,7 +620,7 @@ export default function NewCertificazionePage() {
 
             {/* ========= CERTIFICATION META ========= */}
             <section>
-              <h2 className="text-xl font-semibold text-emerald-900 pb-3 border-b-2 border-emerald-200">
+              <h2 className="text-xl font-semibold text-secondary pb-3 border-b-2 border-secondary">
                 Certification details
               </h2>
 
@@ -660,7 +660,7 @@ export default function NewCertificazionePage() {
 
             {/* ========= DOCUMENT ========= */}
             <section>
-              <h2 className="text-xl font-semibold text-emerald-900 pb-3 border-b-2 border-emerald-200">Document</h2>
+              <h2 className="text-xl font-semibold text-secondary pb-3 border-b-2 border-secondary">Document</h2>
 
               <FieldSet className="mt-6">
                 <FieldGroup className="grid grid-cols-1 gap-6">
