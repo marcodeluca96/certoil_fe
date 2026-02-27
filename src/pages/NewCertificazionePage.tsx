@@ -8,11 +8,12 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
 import { useMemo, useRef, useState } from "react";
+import { API_URL } from "@/store/consts";
 
 /** =======================
  *  Config
  *  ======================= */
-const POST_URL = "http://localhost:3005/api/certifications";
+const POST_URL = API_URL+"/api/certifications";
 const MAX_FILE_MB = 10;
 const MAX_FILE_BYTES = MAX_FILE_MB * 1024 * 1024;
 const ACCEPTED_MIME = ["application/pdf"] as const;
