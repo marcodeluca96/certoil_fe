@@ -1,19 +1,27 @@
 import PageHeader from "@/components/PageHeader";
 import type { ActionButton } from "@/types";
 import { useNavigate } from "react-router-dom";
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCertifications } from "@/store/slices/certificationSlice";
+import type { RootState, AppDispatch } from "@/store";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 const CertificazioniPage = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
+  const { items, loading, currentPage, pageSize } = useSelector(
+    (state: RootState) => state.certification,
+  );
+
+  useEffect(() => {
+    dispatch(fetchCertifications({ page: currentPage, limit: pageSize }));
+  }, [dispatch, currentPage, pageSize]);
+
+  const handlePageChange = (newPage: number) => {
+    dispatch(fetchCertifications({ page: newPage, limit: pageSize }));
+  };
 
   const actionBtns: ActionButton[] = [
     {
@@ -33,31 +41,65 @@ const CertificazioniPage = () => {
         pageSubtitle="Manage and monitor all your quality certifications"
         actionBtns={actionBtns}
       />
-      <div className="cards-grid">
-        <Card className="cert-card">
-          <CardHeader className="cert-header">
-            <div className="cert-code">CERT-2026-001</div>
-            <span className="cert-status status-approved">Approvata</span>
-          </CardHeader>
-          <CardContent className="cert-info">
-            <div className="info-row">
-              <span className="info-label">Produttore</span>
-              <span className="info-value">Oleificio Toscano</span>
-            </div>
-            <div className="info-row">
-              <span className="info-label">Data Certificazione</span>
-              <span className="info-value">15/01/2026</span>
-            </div>
-            <div className="info-row">
-              <span className="info-label">Validità</span>
-              <span className="info-value">15/01/2027</span>
-            </div>
-          </CardContent>
-          <CardFooter className="cert-actions">
-            <Button variant="outline">Visualizza</Button>
-          </CardFooter>
-        </Card>
-      </div>
+      {loading && <div className="text-center py-10">Loading certifications...</div>}
+      {!loading && items.length === 0 && (
+        <div className="text-center py-10">No certifications found.</div>
+      )}
+      {!loading && items.length > 0 && (
+        <>
+          <div className="cards-grid">
+            {items.map((cert) => (
+              <Card key={cert.certificationId} className="cert-card">
+                <CardHeader className="cert-header">
+                  <div className="cert-code">{cert.certificationCode}</div>
+                  {/* <span
+                    className={`cert-status ${isValid(cert.certificationCreatedAt) ? "status-approved" : "status-expired"}`}
+                  >
+                    {isValid(cert.certificationCreatedAt) ? "Valid" : "Expired"}
+                  </span> */}
+                </CardHeader>
+                <CardContent className="cert-info">
+                  <div className="info-row">
+                    <span className="info-label">Company</span>
+                    <span className="info-value">{cert.companyName}</span>
+                  </div>
+                  <div className="info-row">
+                    <span className="info-label">Create date</span>
+                    <span className="info-value">
+                      {new Date(cert.certificationCreatedAt).toLocaleDateString()}
+                    </span>
+                  </div>
+                </CardContent>
+                <CardFooter className="cert-actions">
+                  <Button
+                    variant="outline"
+                    onClick={() => window.open(cert.certificatePath, "_blank")}
+                  >
+                    Show Certificate
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+          <div className="flex justify-center items-center gap-4 mt-8 pb-10">
+            <Button
+              variant="outline"
+              disabled={currentPage === 1}
+              onClick={() => handlePageChange(currentPage - 1)}
+            >
+              Previous
+            </Button>
+            <span className="font-medium text-sm">Page {currentPage}</span>
+            <Button
+              variant="outline"
+              disabled={items.length < pageSize}
+              onClick={() => handlePageChange(currentPage + 1)}
+            >
+              Next
+            </Button>
+          </div>
+        </>
+      )}
     </>
   );
 };

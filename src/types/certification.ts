@@ -16,7 +16,7 @@ export interface Certification {
   oilData: OilData[];
   certificationCode: string;
   certificationCreatedAt: string;
-  documentPath: string;
+  certificatePath: string;
   notarizationId: string;
 }
 
