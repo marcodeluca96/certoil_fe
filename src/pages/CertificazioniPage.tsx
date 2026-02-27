@@ -3,15 +3,20 @@ import type { ActionButton } from "@/types";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchCertifications } from "@/store/slices/certificationSlice";
+import {
+  fetchCertifications,
+  fetchLockMetadataCertifications,
+} from "@/store/slices/certificationSlice";
 import type { RootState, AppDispatch } from "@/store";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
+import { SpinnerLoading } from "@/components/SpinnerLoading";
 
 const CertificazioniPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const { items, loading, currentPage, pageSize } = useSelector(
+  const { items, loading, currentPage, pageSize, lockMetadata, loadingLockMetadata } = useSelector(
     (state: RootState) => state.certification,
   );
 
@@ -34,6 +39,18 @@ const CertificazioniPage = () => {
     },
   ];
 
+  const isValid = (notarizationId: string): "valid" | "expired" | "not-found" => {
+    const data = lockMetadata.find((item) => item.notarizationId === notarizationId);
+    if (!data) {
+      return "not-found";
+    }
+    //se deleteLockDate converted to date is minor than today is expired
+    if (new Date(data.deleteLockDate).getTime() < Date.now()) {
+      return "expired";
+    }
+    return "valid";
+  };
+
   return (
     <>
       <PageHeader
@@ -41,7 +58,11 @@ const CertificazioniPage = () => {
         pageSubtitle="Manage and monitor all your quality certifications"
         actionBtns={actionBtns}
       />
-      {loading && <div className="text-center py-10">Loading certifications...</div>}
+      {loading && (
+        <div className="flex w-full justify-center">
+          <SpinnerLoading message="Loading certifications..." />
+        </div>
+      )}
       {!loading && items.length === 0 && (
         <div className="text-center py-10">No certifications found.</div>
       )}
@@ -52,11 +73,17 @@ const CertificazioniPage = () => {
               <Card key={cert.certificationId} className="cert-card">
                 <CardHeader className="cert-header">
                   <div className="cert-code">{cert.certificationCode}</div>
-                  {/* <span
-                    className={`cert-status ${isValid(cert.certificationCreatedAt) ? "status-approved" : "status-expired"}`}
+                  <span
+                    className={`cert-status ${isValid(cert.notarizationId) === "valid" ? "status-approved" : isValid(cert.notarizationId) === "expired" ? "status-expired" : ""}`}
                   >
-                    {isValid(cert.certificationCreatedAt) ? "Valid" : "Expired"}
-                  </span> */}
+                    {isValid(cert.notarizationId) === "valid" ? (
+                      "Valid"
+                    ) : isValid(cert.notarizationId) === "expired" ? (
+                      "Expired"
+                    ) : loadingLockMetadata === cert.notarizationId ? (
+                      <Spinner />
+                    ) : null}
+                  </span>
                 </CardHeader>
                 <CardContent className="cert-info">
                   <div className="info-row">
@@ -76,6 +103,12 @@ const CertificazioniPage = () => {
                     onClick={() => window.open(cert.certificatePath, "_blank")}
                   >
                     Show Certificate
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => dispatch(fetchLockMetadataCertifications(cert.notarizationId))}
+                  >
+                    Check Validity
                   </Button>
                 </CardFooter>
               </Card>

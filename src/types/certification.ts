@@ -28,8 +28,28 @@ export interface CertificationResponse {
 
 export interface CertificationState {
   items: Certification[];
+  lockMetadata: LockMetadataResponse[];
   loading: boolean;
+  loadingLockMetadata: string | null;
   error: string | null;
   currentPage: number;
   pageSize: number;
+}
+
+export interface LockMetadataResponse {
+  success: boolean;
+  notarizationId: string;
+  deleteLockDate: string;
+  state: {
+    deleteLock: {
+      args: number;
+      type: string;
+    };
+    transferLock: {
+      type: string;
+    };
+    updateLock: {
+      type: string;
+    };
+  };
 }
