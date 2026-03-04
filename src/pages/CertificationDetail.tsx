@@ -102,7 +102,7 @@ const CertificationDetail = () => {
         <Button
           variant="ghost"
           onClick={() => navigate("/certificazioni")}
-          className="mb-4 hover:bg-primary-green/5 text-primary-green"
+          className="mb-4 hover:bg-primary-green/5 text-primary-green cursor-pointer"
         >
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to Certifications
         </Button>

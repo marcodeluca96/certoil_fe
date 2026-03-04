@@ -1,19 +1,26 @@
 import PageHeader from "@/components/PageHeader";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { FieldGroup, FieldSet, Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 
 import { useMemo, useRef, useState } from "react";
 import { API_URL } from "@/store/consts";
+import { ArrowLeft } from "lucide-react";
 
 /** =======================
  *  Config
  *  ======================= */
-const POST_URL = API_URL+"/api/certifications";
+const POST_URL = API_URL + "/api/certifications";
 const MAX_FILE_MB = 10;
 const MAX_FILE_BYTES = MAX_FILE_MB * 1024 * 1024;
 const ACCEPTED_MIME = ["application/pdf"] as const;
@@ -23,7 +30,7 @@ type Scheme = "EVOO" | "BIO" | "DOP" | "IGP" | "ALTRO";
 type ProductClass = "extravergine" | "vergine" | "biologico" | "dop" | "igp";
 
 type OilDataItem = {
-  name: string
+  name: string;
   value: string; // keep as string like your example
   unit: string;
 };
@@ -75,7 +82,9 @@ function isEmailValid(v: string) {
 }
 
 function isDuplicateFile(list: File[], f: File) {
-  return list.some((x) => x.name === f.name && x.size === f.size && x.lastModified === f.lastModified);
+  return list.some(
+    (x) => x.name === f.name && x.size === f.size && x.lastModified === f.lastModified,
+  );
 }
 
 function validateOneFile(f: File): string | null {
@@ -101,6 +110,7 @@ function toIsoDateOrEmpty(yyyyMmDd: string): string {
 
 export default function NewCertificazionePage() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const navigate = useNavigate();
 
   // ===== (You still have these, UI can keep them; not sent in new payload) =====
   const [scheme, setScheme] = useState<Scheme>("EVOO");
@@ -303,7 +313,7 @@ export default function NewCertificazionePage() {
       fd.append("oilData", JSON.stringify(payloadDraft.oilData));
       fd.append("companyData", JSON.stringify(payloadDraft.companyData));
 
-      fd.append("certificationExpireDate", (payloadDraft.certificationExpireDate));
+      fd.append("certificationExpireDate", payloadDraft.certificationExpireDate);
 
       fd.append("certificationNote", JSON.stringify(payloadDraft.certificationNote));
 
@@ -331,429 +341,459 @@ export default function NewCertificazionePage() {
   }
 
   return (
-    <>
-      <PageHeader pageTitle="New Oil Certification" pageSubtitle="Fill in the data and upload the document" />
-
-      <div className="mx-auto max-w-[980px] px-4 pb-10">
-        <Link
-          to="/certificazioni"
-          className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-emerald-700 transition-colors"
+    <div className="container mx-auto py-8 px-4">
+      <div className="mb-6">
+        <Button
+          variant="ghost"
+          onClick={() => navigate("/certificazioni")}
+          className="mb-4 hover:bg-primary-green/5 text-primary-green cursor-pointer"
         >
-          <span className="text-base">←</span> Back to certifications
-        </Link>
+          <ArrowLeft className="mr-2 h-4 w-4" /> Back to Certifications
+        </Button>
+      </div>
 
-        {submitOk && (
-          <div className="mt-6 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-emerald-900">
-            ✓ {submitOk}
-          </div>
-        )}
-        {submitError && (
-          <div className="mt-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-900">✕ {submitError}</div>
-        )}
+      <PageHeader
+        pageTitle="New Oil Certification"
+        pageSubtitle="Fill in the data and upload the document"
+      />
 
-        <div className="mt-6 rounded-xl bg-white p-6 md:p-10 shadow-lg border border-slate-100">
-          <form className="space-y-10" onSubmit={onSubmit}>
-            {/* ========= BASIC (optional UI fields you already had) ========= */}
-            <section>
-              <h2 className="text-xl font-semibold text-secondary pb-3 border-b-2 border-secondary">Basic</h2>
+      {submitOk && (
+        <div className="mt-6 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-emerald-900">
+          ✓ {submitOk}
+        </div>
+      )}
+      {submitError && (
+        <div className="mt-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-900">
+          ✕ {submitError}
+        </div>
+      )}
 
-              <FieldSet className="mt-6">
-                <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Field>
-                    <FieldLabel htmlFor="issuedAt">Issued At</FieldLabel>
-                    <Input id="issuedAt" type="date" value={issuedAt} onChange={(e) => setIssuedAt(e.target.value)} />
-                  </Field>
+      <div className="mt-6 rounded-xl bg-white p-6 md:p-10 shadow-lg border border-slate-100">
+        <form className="space-y-10" onSubmit={onSubmit}>
+          {/* ========= BASIC (optional UI fields you already had) ========= */}
+          <section>
+            <h2 className="text-xl font-semibold text-secondary pb-3 border-b-2 border-secondary">
+              Basic
+            </h2>
 
-                  <Field>
-                    <FieldLabel htmlFor="scheme">Scheme</FieldLabel>
-                    <Select value={scheme} onValueChange={(v) => setScheme(v as Scheme)}>
-                      <SelectTrigger id="scheme">
-                        <SelectValue placeholder="Select scheme" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="EVOO">EVOO</SelectItem>
-                        <SelectItem value="BIO">BIO</SelectItem>
-                        <SelectItem value="DOP">DOP</SelectItem>
-                        <SelectItem value="IGP">IGP</SelectItem>
-                        <SelectItem value="ALTRO">OTHER</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </Field>
+            <FieldSet className="mt-6">
+              <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Field>
+                  <FieldLabel htmlFor="issuedAt">Issued At</FieldLabel>
+                  <Input
+                    id="issuedAt"
+                    type="date"
+                    value={issuedAt}
+                    onChange={(e) => setIssuedAt(e.target.value)}
+                  />
+                </Field>
 
-                  <Field>
-                    <FieldLabel htmlFor="productClass">Product Class</FieldLabel>
-                    <Select value={productClass} onValueChange={(v) => setProductClass(v as ProductClass)}>
-                      <SelectTrigger id="productClass">
-                        <SelectValue placeholder="Select class" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="extravergine">Extra Virgin</SelectItem>
-                        <SelectItem value="vergine">Virgin</SelectItem>
-                        <SelectItem value="biologico">Organic</SelectItem>
-                        <SelectItem value="dop">DOP</SelectItem>
-                        <SelectItem value="igp">IGP</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </Field>
-                </FieldGroup>
-              </FieldSet>
-            </section>
+                <Field>
+                  <FieldLabel htmlFor="scheme">Scheme</FieldLabel>
+                  <Select value={scheme} onValueChange={(v) => setScheme(v as Scheme)}>
+                    <SelectTrigger id="scheme">
+                      <SelectValue placeholder="Select scheme" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="EVOO">EVOO</SelectItem>
+                      <SelectItem value="BIO">BIO</SelectItem>
+                      <SelectItem value="DOP">DOP</SelectItem>
+                      <SelectItem value="IGP">IGP</SelectItem>
+                      <SelectItem value="ALTRO">OTHER</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </Field>
 
-            {/* ========= OIL DATA ========= */}
-            <section>
-              <h2 className="text-xl font-semibold text-secondary pb-3 border-b-2 border-secondary">Oil data</h2>
+                <Field>
+                  <FieldLabel htmlFor="productClass">Product Class</FieldLabel>
+                  <Select
+                    value={productClass}
+                    onValueChange={(v) => setProductClass(v as ProductClass)}
+                  >
+                    <SelectTrigger id="productClass">
+                      <SelectValue placeholder="Select class" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="extravergine">Extra Virgin</SelectItem>
+                      <SelectItem value="vergine">Virgin</SelectItem>
+                      <SelectItem value="biologico">Organic</SelectItem>
+                      <SelectItem value="dop">DOP</SelectItem>
+                      <SelectItem value="igp">IGP</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </Field>
+              </FieldGroup>
+            </FieldSet>
+          </section>
 
-              <FieldSet className="mt-6">
-                <FieldGroup className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <Field>
-                    <FieldLabel htmlFor="acidityPct">Acidity (%) *</FieldLabel>
-                    <Input
-                      id="acidityPct"
-                      type="number"
-                      step="0.01"
-                      placeholder="0.4"
-                      value={acidityPct}
-                      onChange={(e) => {
-                        setAcidityPct(e.target.value);
-                        clearError("oil.acidity");
-                      }}
-                    />
-                    <ErrorText msg={errors["oil.acidity"]} />
-                  </Field>
+          {/* ========= OIL DATA ========= */}
+          <section>
+            <h2 className="text-xl font-semibold text-secondary pb-3 border-b-2 border-secondary">
+              Oil data
+            </h2>
 
-                  <Field>
-                    <FieldLabel htmlFor="peroxides">Peroxides (meq O2/kg) *</FieldLabel>
-                    <Input
-                      id="peroxides"
-                      type="number"
-                      step="0.1"
-                      placeholder="5.2"
-                      value={peroxides}
-                      onChange={(e) => {
-                        setPeroxides(e.target.value);
-                        clearError("oil.peroxides");
-                      }}
-                    />
-                    <ErrorText msg={errors["oil.peroxides"]} />
-                  </Field>
+            <FieldSet className="mt-6">
+              <FieldGroup className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <Field>
+                  <FieldLabel htmlFor="acidityPct">Acidity (%) *</FieldLabel>
+                  <Input
+                    id="acidityPct"
+                    type="number"
+                    step="0.01"
+                    placeholder="0.4"
+                    value={acidityPct}
+                    onChange={(e) => {
+                      setAcidityPct(e.target.value);
+                      clearError("oil.acidity");
+                    }}
+                  />
+                  <ErrorText msg={errors["oil.acidity"]} />
+                </Field>
 
-                  <Field>
-                    <FieldLabel htmlFor="polyphenols">Polyphenols (mg/kg) *</FieldLabel>
-                    <Input
-                      id="polyphenols"
-                      type="number"
-                      step="1"
-                      placeholder="350"
-                      value={polyphenols}
-                      onChange={(e) => {
-                        setPolyphenols(e.target.value);
-                        clearError("oil.polyphenols");
-                      }}
-                    />
-                    <ErrorText msg={errors["oil.polyphenols"]} />
-                  </Field>
-                </FieldGroup>
+                <Field>
+                  <FieldLabel htmlFor="peroxides">Peroxides (meq O2/kg) *</FieldLabel>
+                  <Input
+                    id="peroxides"
+                    type="number"
+                    step="0.1"
+                    placeholder="5.2"
+                    value={peroxides}
+                    onChange={(e) => {
+                      setPeroxides(e.target.value);
+                      clearError("oil.peroxides");
+                    }}
+                  />
+                  <ErrorText msg={errors["oil.peroxides"]} />
+                </Field>
 
-                {acidityBusinessError && (
-                  <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-amber-900 text-sm">
-                    ⚠️ {acidityBusinessError}
-                  </div>
-                )}
-              </FieldSet>
-            </section>
+                <Field>
+                  <FieldLabel htmlFor="polyphenols">Polyphenols (mg/kg) *</FieldLabel>
+                  <Input
+                    id="polyphenols"
+                    type="number"
+                    step="1"
+                    placeholder="350"
+                    value={polyphenols}
+                    onChange={(e) => {
+                      setPolyphenols(e.target.value);
+                      clearError("oil.polyphenols");
+                    }}
+                  />
+                  <ErrorText msg={errors["oil.polyphenols"]} />
+                </Field>
+              </FieldGroup>
 
-            {/* ========= COMPANY DATA ========= */}
-            <section>
-              <h2 className="text-xl font-semibold text-secondary pb-3 border-b-2 border-secondary">Company data</h2>
+              {acidityBusinessError && (
+                <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-amber-900 text-sm">
+                  ⚠️ {acidityBusinessError}
+                </div>
+              )}
+            </FieldSet>
+          </section>
 
-              <FieldSet className="mt-6">
-                <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Field>
-                    <FieldLabel htmlFor="companyName">Company name *</FieldLabel>
-                    <Input
-                      id="companyName"
-                      placeholder="Oleificio Rossi S.r.l."
-                      value={companyName}
-                      onChange={(e) => {
-                        setCompanyName(e.target.value);
-                        clearError("company.companyName");
-                      }}
-                    />
-                    <ErrorText msg={errors["company.companyName"]} />
-                  </Field>
+          {/* ========= COMPANY DATA ========= */}
+          <section>
+            <h2 className="text-xl font-semibold text-secondary pb-3 border-b-2 border-secondary">
+              Company data
+            </h2>
 
-                  <Field>
-                    <FieldLabel htmlFor="vatNumber">VAT number *</FieldLabel>
-                    <Input
-                      id="vatNumber"
-                      placeholder="IT12345678901"
-                      value={vatNumber}
-                      onChange={(e) => {
-                        setVatNumber(e.target.value);
-                        clearError("company.vatNumber");
-                      }}
-                    />
-                    <ErrorText msg={errors["company.vatNumber"]} />
-                  </Field>
+            <FieldSet className="mt-6">
+              <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Field>
+                  <FieldLabel htmlFor="companyName">Company name *</FieldLabel>
+                  <Input
+                    id="companyName"
+                    placeholder="Oleificio Rossi S.r.l."
+                    value={companyName}
+                    onChange={(e) => {
+                      setCompanyName(e.target.value);
+                      clearError("company.companyName");
+                    }}
+                  />
+                  <ErrorText msg={errors["company.companyName"]} />
+                </Field>
 
-                  <Field>
-                    <FieldLabel htmlFor="taxCode">Tax code *</FieldLabel>
-                    <Input
-                      id="taxCode"
-                      placeholder="12345678901"
-                      value={taxCode}
-                      onChange={(e) => {
-                        setTaxCode(e.target.value);
-                        clearError("company.taxCode");
-                      }}
-                    />
-                    <ErrorText msg={errors["company.taxCode"]} />
-                  </Field>
+                <Field>
+                  <FieldLabel htmlFor="vatNumber">VAT number *</FieldLabel>
+                  <Input
+                    id="vatNumber"
+                    placeholder="IT12345678901"
+                    value={vatNumber}
+                    onChange={(e) => {
+                      setVatNumber(e.target.value);
+                      clearError("company.vatNumber");
+                    }}
+                  />
+                  <ErrorText msg={errors["company.vatNumber"]} />
+                </Field>
 
-                  <Field>
-                    <FieldLabel htmlFor="email">Email *</FieldLabel>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="info@oleificiorossi.it"
-                      value={email}
-                      onChange={(e) => {
-                        setEmail(e.target.value);
-                        clearError("company.email");
-                      }}
-                    />
-                    <ErrorText msg={errors["company.email"]} />
-                  </Field>
+                <Field>
+                  <FieldLabel htmlFor="taxCode">Tax code *</FieldLabel>
+                  <Input
+                    id="taxCode"
+                    placeholder="12345678901"
+                    value={taxCode}
+                    onChange={(e) => {
+                      setTaxCode(e.target.value);
+                      clearError("company.taxCode");
+                    }}
+                  />
+                  <ErrorText msg={errors["company.taxCode"]} />
+                </Field>
 
-                  <Field>
-                    <FieldLabel htmlFor="certifiedEmail">Certified email (PEC)</FieldLabel>
-                    <Input
-                      id="certifiedEmail"
-                      type="email"
-                      placeholder="amministrazione@pec.oleificiorossi.it"
-                      value={certifiedEmail}
-                      onChange={(e) => {
-                        setCertifiedEmail(e.target.value);
-                        clearError("company.certifiedEmail");
-                      }}
-                    />
-                    <ErrorText msg={errors["company.certifiedEmail"]} />
-                  </Field>
+                <Field>
+                  <FieldLabel htmlFor="email">Email *</FieldLabel>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="info@oleificiorossi.it"
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      clearError("company.email");
+                    }}
+                  />
+                  <ErrorText msg={errors["company.email"]} />
+                </Field>
 
-                  <Field>
-                    <FieldLabel htmlFor="phoneNumber">Phone number</FieldLabel>
-                    <Input
-                      id="phoneNumber"
-                      placeholder="+39 055 1234567"
-                      value={phoneNumber}
-                      onChange={(e) => setPhoneNumber(e.target.value)}
-                    />
-                  </Field>
+                <Field>
+                  <FieldLabel htmlFor="certifiedEmail">Certified email (PEC)</FieldLabel>
+                  <Input
+                    id="certifiedEmail"
+                    type="email"
+                    placeholder="amministrazione@pec.oleificiorossi.it"
+                    value={certifiedEmail}
+                    onChange={(e) => {
+                      setCertifiedEmail(e.target.value);
+                      clearError("company.certifiedEmail");
+                    }}
+                  />
+                  <ErrorText msg={errors["company.certifiedEmail"]} />
+                </Field>
 
-                  <Field>
-                    <FieldLabel htmlFor="website">Website</FieldLabel>
-                    <Input
-                      id="website"
-                      placeholder="https://www.oleificiorossi.it"
-                      value={website}
-                      onChange={(e) => setWebsite(e.target.value)}
-                    />
-                  </Field>
+                <Field>
+                  <FieldLabel htmlFor="phoneNumber">Phone number</FieldLabel>
+                  <Input
+                    id="phoneNumber"
+                    placeholder="+39 055 1234567"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                  />
+                </Field>
 
-                  <Field className="md:col-span-2">
-                    <FieldLabel htmlFor="address">Address *</FieldLabel>
-                    <Input
-                      id="address"
-                      placeholder="Via delle Olive 42"
-                      value={address}
-                      onChange={(e) => {
-                        setAddress(e.target.value);
-                        clearError("company.address");
-                      }}
-                    />
-                    <ErrorText msg={errors["company.address"]} />
-                  </Field>
+                <Field>
+                  <FieldLabel htmlFor="website">Website</FieldLabel>
+                  <Input
+                    id="website"
+                    placeholder="https://www.oleificiorossi.it"
+                    value={website}
+                    onChange={(e) => setWebsite(e.target.value)}
+                  />
+                </Field>
 
-                  <Field>
-                    <FieldLabel htmlFor="zipCode">ZIP code *</FieldLabel>
-                    <Input
-                      id="zipCode"
-                      placeholder="50100"
-                      value={zipCode}
-                      onChange={(e) => {
-                        setZipCode(e.target.value);
-                        clearError("company.zipCode");
-                      }}
-                    />
-                    <ErrorText msg={errors["company.zipCode"]} />
-                  </Field>
+                <Field className="md:col-span-2">
+                  <FieldLabel htmlFor="address">Address *</FieldLabel>
+                  <Input
+                    id="address"
+                    placeholder="Via delle Olive 42"
+                    value={address}
+                    onChange={(e) => {
+                      setAddress(e.target.value);
+                      clearError("company.address");
+                    }}
+                  />
+                  <ErrorText msg={errors["company.address"]} />
+                </Field>
 
-                  <Field>
-                    <FieldLabel htmlFor="city">City *</FieldLabel>
-                    <Input
-                      id="city"
-                      placeholder="Firenze"
-                      value={city}
-                      onChange={(e) => {
-                        setCity(e.target.value);
-                        clearError("company.city");
-                      }}
-                    />
-                    <ErrorText msg={errors["company.city"]} />
-                  </Field>
+                <Field>
+                  <FieldLabel htmlFor="zipCode">ZIP code *</FieldLabel>
+                  <Input
+                    id="zipCode"
+                    placeholder="50100"
+                    value={zipCode}
+                    onChange={(e) => {
+                      setZipCode(e.target.value);
+                      clearError("company.zipCode");
+                    }}
+                  />
+                  <ErrorText msg={errors["company.zipCode"]} />
+                </Field>
 
-                  <Field>
-                    <FieldLabel htmlFor="province">Province *</FieldLabel>
-                    <Input
-                      id="province"
-                      placeholder="FI"
-                      value={province}
-                      onChange={(e) => {
-                        setProvince(e.target.value);
-                        clearError("company.province");
-                      }}
-                    />
-                    <ErrorText msg={errors["company.province"]} />
-                  </Field>
-                </FieldGroup>
-              </FieldSet>
-            </section>
+                <Field>
+                  <FieldLabel htmlFor="city">City *</FieldLabel>
+                  <Input
+                    id="city"
+                    placeholder="Firenze"
+                    value={city}
+                    onChange={(e) => {
+                      setCity(e.target.value);
+                      clearError("company.city");
+                    }}
+                  />
+                  <ErrorText msg={errors["company.city"]} />
+                </Field>
 
-            {/* ========= CERTIFICATION META ========= */}
-            <section>
-              <h2 className="text-xl font-semibold text-secondary pb-3 border-b-2 border-secondary">
-                Certification details
-              </h2>
+                <Field>
+                  <FieldLabel htmlFor="province">Province *</FieldLabel>
+                  <Input
+                    id="province"
+                    placeholder="FI"
+                    value={province}
+                    onChange={(e) => {
+                      setProvince(e.target.value);
+                      clearError("company.province");
+                    }}
+                  />
+                  <ErrorText msg={errors["company.province"]} />
+                </Field>
+              </FieldGroup>
+            </FieldSet>
+          </section>
 
-              <FieldSet className="mt-6">
-                <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Field>
-                    <FieldLabel htmlFor="expireDate">Certification expire date *</FieldLabel>
-                    <Input
-                      id="expireDate"
-                      type="date"
-                      value={expireDate}
-                      onChange={(e) => {
-                        setExpireDate(e.target.value);
-                        clearError("certification.expireDate");
-                      }}
-                    />
-                    <ErrorText msg={errors["certification.expireDate"]} />
-                  </Field>
+          {/* ========= CERTIFICATION META ========= */}
+          <section>
+            <h2 className="text-xl font-semibold text-secondary pb-3 border-b-2 border-secondary">
+              Certification details
+            </h2>
 
-                  <Field className="md:col-span-2">
-                    <FieldLabel htmlFor="note">Certification note *</FieldLabel>
-                    <Textarea
-                      id="note"
-                      className="min-h-[120px]"
-                      placeholder="e.g. Extra virgin quality certification - Lot A123"
-                      value={note}
-                      onChange={(e) => {
-                        setNote(e.target.value);
-                        clearError("certification.note");
-                      }}
-                    />
-                    <ErrorText msg={errors["certification.note"]} />
-                  </Field>
-                </FieldGroup>
-              </FieldSet>
-            </section>
+            <FieldSet className="mt-6">
+              <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Field>
+                  <FieldLabel htmlFor="expireDate">Certification expire date *</FieldLabel>
+                  <Input
+                    id="expireDate"
+                    type="date"
+                    value={expireDate}
+                    onChange={(e) => {
+                      setExpireDate(e.target.value);
+                      clearError("certification.expireDate");
+                    }}
+                  />
+                  <ErrorText msg={errors["certification.expireDate"]} />
+                </Field>
 
-            {/* ========= DOCUMENT ========= */}
-            <section>
-              <h2 className="text-xl font-semibold text-secondary pb-3 border-b-2 border-secondary">Document</h2>
+                <Field className="md:col-span-2">
+                  <FieldLabel htmlFor="note">Certification note *</FieldLabel>
+                  <Textarea
+                    id="note"
+                    className="min-h-[120px]"
+                    placeholder="e.g. Extra virgin quality certification - Lot A123"
+                    value={note}
+                    onChange={(e) => {
+                      setNote(e.target.value);
+                      clearError("certification.note");
+                    }}
+                  />
+                  <ErrorText msg={errors["certification.note"]} />
+                </Field>
+              </FieldGroup>
+            </FieldSet>
+          </section>
 
-              <FieldSet className="mt-6">
-                <FieldGroup className="grid grid-cols-1 gap-6">
-                  <Field>
-                    <FieldLabel htmlFor="attachments">Upload document *</FieldLabel>
+          {/* ========= DOCUMENT ========= */}
+          <section>
+            <h2 className="text-xl font-semibold text-secondary pb-3 border-b-2 border-secondary">
+              Document
+            </h2>
 
-                    <div
-                      onClick={openFilePicker}
-                      onDragOver={(e) => {
-                        e.preventDefault();
-                        setDragOver(true);
-                      }}
-                      onDragLeave={() => setDragOver(false)}
-                      onDrop={onDrop}
-                      className={[
-                        "rounded-lg border-2 border-dashed p-8 text-center transition cursor-pointer",
-                        dragOver
-                          ? "border-emerald-500 bg-emerald-50"
-                          : "border-slate-200 bg-slate-50 hover:border-emerald-400 hover:bg-white",
-                      ].join(" ")}
-                    >
-                      <div className="text-3xl mb-2">📎</div>
-                      <div className="text-sm text-slate-600">
-                        <strong className="text-emerald-700">Click to upload</strong> or drag & drop
-                        <br />
-                        <span className="text-xs text-slate-500">PDF, JPG, PNG (Max {MAX_FILE_MB}MB)</span>
-                      </div>
+            <FieldSet className="mt-6">
+              <FieldGroup className="grid grid-cols-1 gap-6">
+                <Field>
+                  <FieldLabel htmlFor="attachments">Upload document *</FieldLabel>
 
-                      {files.length > 0 && (
-                        <div className="mt-4 text-left">
-                          <p className="text-xs font-semibold text-slate-700 mb-2">Selected files ({files.length})</p>
-
-                          <ul className="space-y-2">
-                            {files.map((f, idx) => (
-                              <li
-                                key={`${f.name}-${f.size}-${f.lastModified}`}
-                                className="flex items-center justify-between gap-3 rounded-md border border-slate-200 bg-white px-3 py-2"
-                              >
-                                <div className="min-w-0">
-                                  <p className="truncate text-sm text-slate-800">{f.name}</p>
-                                  <p className="text-xs text-slate-500">
-                                    {(f.size / (1024 * 1024)).toFixed(2)} MB — {f.type || "unknown"}
-                                  </p>
-                                </div>
-
-                                <Button
-                                  type="button"
-                                  variant="outline"
-                                  className="h-8 px-3"
-                                  onClick={(ev) => {
-                                    ev.stopPropagation();
-                                    removeFile(idx);
-                                  }}
-                                >
-                                  Remove
-                                </Button>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
+                  <div
+                    onClick={openFilePicker}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      setDragOver(true);
+                    }}
+                    onDragLeave={() => setDragOver(false)}
+                    onDrop={onDrop}
+                    className={[
+                      "rounded-lg border-2 border-dashed p-8 text-center transition cursor-pointer",
+                      dragOver
+                        ? "border-emerald-500 bg-emerald-50"
+                        : "border-slate-200 bg-slate-50 hover:border-emerald-400 hover:bg-white",
+                    ].join(" ")}
+                  >
+                    <div className="text-3xl mb-2">📎</div>
+                    <div className="text-sm text-slate-600">
+                      <strong className="text-emerald-700">Click to upload</strong> or drag & drop
+                      <br />
+                      <span className="text-xs text-slate-500">
+                        PDF, JPG, PNG (Max {MAX_FILE_MB}MB)
+                      </span>
                     </div>
 
-                    <input
-                      ref={fileInputRef}
-                      id="attachments"
-                      type="file"
-                      multiple
-                      accept={ACCEPT_ATTR}
-                      className="hidden"
-                      onChange={onFileInputChange}
-                    />
+                    {files.length > 0 && (
+                      <div className="mt-4 text-left">
+                        <p className="text-xs font-semibold text-slate-700 mb-2">
+                          Selected files ({files.length})
+                        </p>
 
-                    <ErrorText msg={errors["document"]} />
-                  </Field>
-                </FieldGroup>
-              </FieldSet>
-            </section>
+                        <ul className="space-y-2">
+                          {files.map((f, idx) => (
+                            <li
+                              key={`${f.name}-${f.size}-${f.lastModified}`}
+                              className="flex items-center justify-between gap-3 rounded-md border border-slate-200 bg-white px-3 py-2"
+                            >
+                              <div className="min-w-0">
+                                <p className="truncate text-sm text-slate-800">{f.name}</p>
+                                <p className="text-xs text-slate-500">
+                                  {(f.size / (1024 * 1024)).toFixed(2)} MB — {f.type || "unknown"}
+                                </p>
+                              </div>
 
-            {/* ========= Actions ========= */}
-            <div className="flex flex-col md:flex-row gap-3 justify-end pt-8 border-t border-slate-200">
-              <Button asChild variant="outline" className="h-11 px-6">
-                <Link to="/certificazioni">Cancel</Link>
-              </Button>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                className="h-8 px-3"
+                                onClick={(ev) => {
+                                  ev.stopPropagation();
+                                  removeFile(idx);
+                                }}
+                              >
+                                Remove
+                              </Button>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
 
-              <Button type="submit" className="h-11 px-6 bg-emerald-700 hover:bg-emerald-800" disabled={isSubmitting}>
-                {isSubmitting ? "Submitting..." : "Submit"}
-              </Button>
-            </div>
-          </form>
-        </div>
+                  <input
+                    ref={fileInputRef}
+                    id="attachments"
+                    type="file"
+                    multiple
+                    accept={ACCEPT_ATTR}
+                    className="hidden"
+                    onChange={onFileInputChange}
+                  />
+
+                  <ErrorText msg={errors["document"]} />
+                </Field>
+              </FieldGroup>
+            </FieldSet>
+          </section>
+
+          {/* ========= Actions ========= */}
+          <div className="flex flex-col md:flex-row gap-3 justify-end pt-8 border-t border-slate-200">
+            <Button asChild variant="outline" className="h-11 px-6">
+              <Link to="/certificazioni">Cancel</Link>
+            </Button>
+
+            <Button
+              type="submit"
+              className="h-11 px-6 bg-emerald-700 hover:bg-emerald-800"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Submitting..." : "Submit"}
+            </Button>
+          </div>
+        </form>
       </div>
-    </>
+    </div>
   );
 }
