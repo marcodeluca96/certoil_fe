@@ -15,7 +15,8 @@ import {
 
 import { useMemo, useRef, useState } from "react";
 import { API_URL } from "@/store/consts";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Trash2, Plus } from "lucide-react";
+import { toast } from "sonner";
 
 /** =======================
  *  Config
@@ -118,9 +119,11 @@ export default function NewCertificazionePage() {
   const [issuedAt, setIssuedAt] = useState(todayYYYYMMDD());
 
   // ===== Oil analysis (used for oilData) =====
-  const [acidityPct, setAcidityPct] = useState("");
-  const [peroxides, setPeroxides] = useState("");
-  const [polyphenols, setPolyphenols] = useState("");
+  const [oilMeasurements, setOilMeasurements] = useState<OilDataItem[]>([
+    { name: "Acidità", value: "", unit: "%" },
+    { name: "Perossidi", value: "", unit: "meq O2/kg" },
+    { name: "Polifenoli", value: "", unit: "mg/kg" },
+  ]);
 
   // ===== Company data (companyData) =====
   const [companyName, setCompanyName] = useState("");
@@ -152,11 +155,13 @@ export default function NewCertificazionePage() {
   /** Example business rule */
   const acidityBusinessError = useMemo(() => {
     if (productClass !== "extravergine") return "";
-    const a = Number(acidityPct);
+    const acidityRow = oilMeasurements.find((m) => m.name.toLowerCase().includes("acidit"));
+    if (!acidityRow) return "";
+    const a = Number(acidityRow.value);
     if (!Number.isFinite(a)) return "";
     if (a > 0.8) return "For extra virgin olive oil, acidity must be ≤ 0.8%";
     return "";
-  }, [acidityPct, productClass]);
+  }, [oilMeasurements, productClass]);
 
   function clearError(key: string) {
     setErrors((prev) => {
@@ -169,14 +174,13 @@ export default function NewCertificazionePage() {
 
   /** ===== Build payload (EXACT requested shape) ===== */
   const payloadDraft: ApiPayload = useMemo(() => {
-    const oilData: OilDataItem[] = [
-      { name: "Acidità", value: acidityPct.trim(), unit: "%" },
-      { name: "Perossidi", value: peroxides.trim(), unit: "meq O2/kg" },
-      { name: "Polifenoli", value: polyphenols.trim(), unit: "mg/kg" },
-    ];
-
     return {
-      oilData,
+      oilData: oilMeasurements.map((m) => ({
+        ...m,
+        name: m.name.trim(),
+        value: m.value.trim(),
+        unit: m.unit.trim(),
+      })),
       companyData: {
         companyName: companyName.trim(),
         address: address.trim(),
@@ -194,9 +198,7 @@ export default function NewCertificazionePage() {
       certificationNote: note.trim(),
     };
   }, [
-    acidityPct,
-    peroxides,
-    polyphenols,
+    oilMeasurements,
     companyName,
     address,
     zipCode,
@@ -217,11 +219,12 @@ export default function NewCertificazionePage() {
     const e: ErrorMap = {};
 
     // OilData required (as your example shows)
-    if (!acidityPct.trim()) e["oil.acidity"] = "Acidity is required";
-    if (!peroxides.trim()) e["oil.peroxides"] = "Peroxides are required";
-    if (!polyphenols.trim()) e["oil.polyphenols"] = "Polyphenols are required";
+    const hasEmptyMeasurements = oilMeasurements.some((m) => !m.name.trim() || !m.value.trim());
+    if (hasEmptyMeasurements) {
+      e["oil.data"] = "Please fill in all measurement names and values or remove empty rows.";
+    }
 
-    if (acidityBusinessError) e["oil.acidity"] = acidityBusinessError;
+    if (acidityBusinessError) e["oil.data"] = acidityBusinessError;
 
     // Company data required
     if (!companyName.trim()) e["company.companyName"] = "Company name is required";
@@ -325,16 +328,15 @@ export default function NewCertificazionePage() {
 
       if (!res.ok) {
         const t = await res.text().catch(() => "");
-        throw new Error(t || `Server error (${res.status})`);
+        toast.error(t || `Server error (${res.status})`);
+      } else {
+        toast.success("Submitted successfully.");
+        setFiles([]);
+        setErrors({});
+        navigate("/certificazioni");
       }
-
-      setSubmitOk("Submitted successfully.");
-      setFiles([]);
-      setErrors({});
-      // Optionally reset fields:
-      // setAcidityPct(""); setPeroxides(""); setPolyphenols(""); ...
     } catch (err: unknown) {
-      setSubmitError(getErrorMessage(err));
+      toast.error(getErrorMessage(err));
     } finally {
       setIsSubmitting(false);
     }
@@ -428,60 +430,85 @@ export default function NewCertificazionePage() {
 
           {/* ========= OIL DATA ========= */}
           <section>
-            <h2 className="text-xl font-semibold text-secondary pb-3 border-b-2 border-secondary">
-              Oil data
-            </h2>
+            <div className="flex justify-between items-center pb-3 border-b-2 border-secondary">
+              <h2 className="text-xl font-semibold text-secondary">Oil data</h2>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="text-primary-green border-primary-green hover:bg-primary-green/5 gap-2"
+                onClick={() => {
+                  setOilMeasurements((prev) => [...prev, { name: "", value: "", unit: "" }]);
+                }}
+              >
+                <Plus className="h-4 w-4" /> Add Measurement
+              </Button>
+            </div>
 
             <FieldSet className="mt-6">
-              <FieldGroup className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Field>
-                  <FieldLabel htmlFor="acidityPct">Acidity (%) *</FieldLabel>
-                  <Input
-                    id="acidityPct"
-                    type="number"
-                    step="0.01"
-                    placeholder="0.4"
-                    value={acidityPct}
-                    onChange={(e) => {
-                      setAcidityPct(e.target.value);
-                      clearError("oil.acidity");
-                    }}
-                  />
-                  <ErrorText msg={errors["oil.acidity"]} />
-                </Field>
+              <div className="space-y-4">
+                {oilMeasurements.map((m, idx) => (
+                  <div
+                    key={idx}
+                    className="flex flex-col md:flex-row gap-4 items-end animate-in fade-in slide-in-from-left-2 duration-300"
+                  >
+                    <Field className="flex-1">
+                      {idx === 0 && <FieldLabel>Name *</FieldLabel>}
+                      <Input
+                        placeholder="e.g. Acidity"
+                        value={m.name}
+                        onChange={(e) => {
+                          const next = [...oilMeasurements];
+                          next[idx].name = e.target.value;
+                          setOilMeasurements(next);
+                          clearError("oil.data");
+                        }}
+                      />
+                    </Field>
+                    <Field className="w-full md:w-32">
+                      {idx === 0 && <FieldLabel>Value *</FieldLabel>}
+                      <Input
+                        placeholder="0.4"
+                        value={m.value}
+                        onChange={(e) => {
+                          const next = [...oilMeasurements];
+                          next[idx].value = e.target.value;
+                          setOilMeasurements(next);
+                          clearError("oil.data");
+                        }}
+                      />
+                    </Field>
+                    <Field className="w-full md:w-32">
+                      {idx === 0 && <FieldLabel>Unit</FieldLabel>}
+                      <Input
+                        placeholder="%"
+                        value={m.unit}
+                        onChange={(e) => {
+                          const next = [...oilMeasurements];
+                          next[idx].unit = e.target.value;
+                          setOilMeasurements(next);
+                        }}
+                      />
+                    </Field>
+                    <div className={idx === 0 ? "pb-0.5" : ""}>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="text-muted-foreground hover:text-destructive hover:bg-destructive/5"
+                        onClick={() => {
+                          setOilMeasurements((prev) => prev.filter((_, i) => i !== idx));
+                        }}
+                        disabled={oilMeasurements.length <= 1}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
 
-                <Field>
-                  <FieldLabel htmlFor="peroxides">Peroxides (meq O2/kg) *</FieldLabel>
-                  <Input
-                    id="peroxides"
-                    type="number"
-                    step="0.1"
-                    placeholder="5.2"
-                    value={peroxides}
-                    onChange={(e) => {
-                      setPeroxides(e.target.value);
-                      clearError("oil.peroxides");
-                    }}
-                  />
-                  <ErrorText msg={errors["oil.peroxides"]} />
-                </Field>
-
-                <Field>
-                  <FieldLabel htmlFor="polyphenols">Polyphenols (mg/kg) *</FieldLabel>
-                  <Input
-                    id="polyphenols"
-                    type="number"
-                    step="1"
-                    placeholder="350"
-                    value={polyphenols}
-                    onChange={(e) => {
-                      setPolyphenols(e.target.value);
-                      clearError("oil.polyphenols");
-                    }}
-                  />
-                  <ErrorText msg={errors["oil.polyphenols"]} />
-                </Field>
-              </FieldGroup>
+              <ErrorText msg={errors["oil.data"]} />
 
               {acidityBusinessError && (
                 <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-amber-900 text-sm">

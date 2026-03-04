@@ -24,7 +24,6 @@ import {
   ShieldCheck,
   ShieldAlert,
   Lock,
-  ExternalLink,
 } from "lucide-react";
 import type { ActionButton } from "@/types";
 
