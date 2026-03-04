@@ -22,6 +22,7 @@ import {
   CreditCard,
   AtSign,
 } from "lucide-react";
+import type { ActionButton } from "@/types";
 
 const CertificationDetail = () => {
   const { id } = useParams();
@@ -70,6 +71,27 @@ const CertificationDetail = () => {
     );
   }
 
+  // const isValid = (notarizationId: string): "valid" | "expired" | "not-found" => {
+  //   const data = lockMetadata.find((item) => item.notarizationId === notarizationId);
+  //   if (!data) {
+  //     return "not-found";
+  //   }
+  //   //se deleteLockDate converted to date is minor than today is expired
+  //   if (new Date(data.deleteLockDate).getTime() < Date.now()) {
+  //     return "expired";
+  //   }
+  //   return "valid";
+  // };
+
+  const actionBtns: ActionButton[] = [
+    {
+      label: "Show Certificate",
+      onClick: () => window.open(certification.certificatePath, "_blank"),
+      variant: "default",
+      size: "default",
+    },
+  ];
+
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="mb-6">
@@ -85,14 +107,7 @@ const CertificationDetail = () => {
       <PageHeader
         pageTitle={`Certification: ${certification.certificationCode}`}
         pageSubtitle="Complete details and technical data for this certification"
-        actionBtns={[
-          {
-            label: "Show Certificate PDF",
-            onClick: () => window.open(certification.certificatePath, "_blank"),
-            variant: "default",
-            size: "default",
-          },
-        ]}
+        actionBtns={actionBtns}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
@@ -216,7 +231,7 @@ const CertificationDetail = () => {
                 <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center">
                   <Hash className="mr-1 h-3 w-3" /> Certification Code
                 </span>
-                <p className="font-mono text-xs bg-bg-cream/50 p-2 rounded-md border border-light-green/10 text-primary-green text-center">
+                <p className="font-mono text-xs bg-bg-cream/50 rounded-md border border-light-green/10 text-primary-green text-left">
                   {certification.certificationCode}
                 </p>
               </div>

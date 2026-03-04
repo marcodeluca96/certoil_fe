@@ -35,18 +35,6 @@ const CertificazioniPage = () => {
     },
   ];
 
-  // const isValid = (notarizationId: string): "valid" | "expired" | "not-found" => {
-  //   const data = lockMetadata.find((item) => item.notarizationId === notarizationId);
-  //   if (!data) {
-  //     return "not-found";
-  //   }
-  //   //se deleteLockDate converted to date is minor than today is expired
-  //   if (new Date(data.deleteLockDate).getTime() < Date.now()) {
-  //     return "expired";
-  //   }
-  //   return "valid";
-  // };
-
   return (
     <>
       <PageHeader

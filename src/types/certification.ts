@@ -28,6 +28,8 @@ export interface Certification {
   certificationCreatedAt: string;
   certificatePath: string;
   notarizationId: string;
+  isExpired: boolean;
+  deleteLockDate: string;
 }
 
 export interface CertificationResponse {
