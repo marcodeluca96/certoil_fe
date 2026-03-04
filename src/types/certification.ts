@@ -13,6 +13,16 @@ export interface Certification {
   certificationId: number;
   companyName: string;
   companyId: number;
+  address: string;
+  zipCode: string;
+  city: string;
+  province: string;
+  vatNumber: string;
+  taxCode: string;
+  email: string;
+  certifiedEmail: string;
+  phoneNumber: string;
+  website: string;
   oilData: OilData[];
   certificationCode: string;
   certificationCreatedAt: string;
