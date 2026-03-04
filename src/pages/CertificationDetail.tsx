@@ -26,12 +26,14 @@ import {
   Lock,
 } from "lucide-react";
 import type { ActionButton } from "@/types";
+import { VerifyDocumentModal } from "@/components/VerifyDocumentModal";
 
 const CertificationDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [certification, setCertification] = useState<Certification | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -88,6 +90,12 @@ const CertificationDetail = () => {
 
   const actionBtns: ActionButton[] = [
     {
+      label: "Verify Document",
+      onClick: () => setIsVerifyModalOpen(true),
+      variant: "outline",
+      size: "default",
+    },
+    {
       label: "Show Certificate",
       onClick: () => window.open(certification.certificatePath, "_blank"),
       variant: "default",
@@ -111,6 +119,12 @@ const CertificationDetail = () => {
         pageTitle={`Certification: ${certification.certificationCode}`}
         pageSubtitle="Complete details and technical data for this certification"
         actionBtns={actionBtns}
+      />
+
+      <VerifyDocumentModal
+        isOpen={isVerifyModalOpen}
+        onClose={() => setIsVerifyModalOpen(false)}
+        notarizationId={certification.notarizationId}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
