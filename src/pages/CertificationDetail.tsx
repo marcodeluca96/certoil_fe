@@ -21,6 +21,10 @@ import {
   Globe,
   CreditCard,
   AtSign,
+  ShieldCheck,
+  ShieldAlert,
+  Lock,
+  ExternalLink,
 } from "lucide-react";
 import type { ActionButton } from "@/types";
 
@@ -111,129 +115,188 @@ const CertificationDetail = () => {
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
-        {/* Main Info Card */}
-        <Card className="lg:col-span-1 shadow-sm border-light-green/20 overflow-hidden h-fit">
-          <CardHeader className="bg-primary-green/5 border-b border-light-green/10">
-            <CardTitle className="flex items-center text-primary-green">
-              <Building2 className="mr-2 h-5 w-5 text-accent-gold" />
-              Company Details
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-6 space-y-6">
-            {/* Basic Identity */}
-            <div className="space-y-4">
-              <div className="flex flex-col gap-1">
-                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-                  Company Name
-                </span>
-                <p className="text-xl font-bold text-primary-green tracking-tight">
-                  {certification.companyName}
-                </p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
+        <div className="lg:col-span-1 space-y-8">
+          {/* Company Identity Card */}
+          <Card className="shadow-sm border-light-green/20 overflow-hidden h-fit">
+            <CardHeader className="bg-primary-green/5 border-b border-light-green/10">
+              <CardTitle className="flex items-center text-primary-green">
+                <Building2 className="mr-2 h-5 w-5 text-accent-gold" />
+                Company Details
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-6 space-y-6">
+              {/* Basic Identity */}
+              <div className="space-y-4">
                 <div className="flex flex-col gap-1">
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center">
-                    <CreditCard className="mr-1 h-3 w-3" /> VAT Number
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                    Company Name
                   </span>
-                  <p className="text-sm font-medium">{certification.vatNumber || "-"}</p>
+                  <p className="text-xl font-bold text-primary-green tracking-tight">
+                    {certification.companyName}
+                  </p>
                 </div>
-                <div className="flex flex-col gap-1">
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center">
-                    <Hash className="mr-1 h-3 w-3" /> Tax Code
-                  </span>
-                  <p className="text-sm font-medium">{certification.taxCode || "-"}</p>
-                </div>
-              </div>
-            </div>
 
-            <Separator className="bg-light-green/10" />
-
-            {/* Location */}
-            <div className="flex flex-col gap-2">
-              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center">
-                <MapPin className="mr-1 h-3 w-3 text-accent-gold" /> Location
-              </span>
-              <div className="text-sm space-y-0.5">
-                <p className="font-medium">{certification.address}</p>
-                <p className="text-muted-foreground">
-                  {certification.zipCode} {certification.city} ({certification.province})
-                </p>
-              </div>
-            </div>
-
-            <Separator className="bg-light-green/10" />
-
-            {/* Contact Details */}
-            <div className="space-y-3">
-              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-                Contact Information
-              </span>
-
-              <div className="grid gap-2 text-sm">
-                <div className="flex items-center gap-2 group">
-                  <Mail className="h-4 w-4 text-accent-gold/70" />
-                  <a
-                    href={`mailto:${certification.email}`}
-                    className="hover:text-primary-green hover:underline truncate"
-                  >
-                    {certification.email}
-                  </a>
-                </div>
-                {certification.certifiedEmail && (
-                  <div className="flex items-center gap-2 group">
-                    <AtSign className="h-4 w-4 text-accent-gold/70" />
-                    <a
-                      href={`mailto:${certification.certifiedEmail}`}
-                      className="hover:text-primary-green hover:underline truncate text-xs italic"
-                    >
-                      {certification.certifiedEmail}{" "}
-                      <span className="text-[9px] not-italic font-bold bg-primary-green/10 px-1 rounded ml-1 text-primary-green">
-                        PEC
-                      </span>
-                    </a>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex flex-col gap-1">
+                    <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center">
+                      <CreditCard className="mr-1 h-3 w-3" /> VAT Number
+                    </span>
+                    <p className="text-sm font-medium">{certification.vatNumber || "-"}</p>
                   </div>
-                )}
-                <div className="flex items-center gap-2 group">
-                  <Phone className="h-4 w-4 text-accent-gold/70" />
-                  <a
-                    href={`tel:${certification.phoneNumber}`}
-                    className="hover:text-primary-green hover:underline"
-                  >
-                    {certification.phoneNumber}
-                  </a>
+                  <div className="flex flex-col gap-1">
+                    <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center">
+                      <Hash className="mr-1 h-3 w-3" /> Tax Code
+                    </span>
+                    <p className="text-sm font-medium">{certification.taxCode || "-"}</p>
+                  </div>
                 </div>
-                {certification.website && (
+              </div>
+
+              <Separator className="bg-light-green/10" />
+
+              {/* Location */}
+              <div className="flex flex-col gap-2">
+                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center">
+                  <MapPin className="mr-1 h-3 w-3 text-accent-gold" /> Location
+                </span>
+                <div className="text-sm space-y-0.5">
+                  <p className="font-medium">{certification.address}</p>
+                  <p className="text-muted-foreground">
+                    {certification.zipCode} {certification.city} ({certification.province})
+                  </p>
+                </div>
+              </div>
+
+              <Separator className="bg-light-green/10" />
+
+              {/* Contact Details */}
+              <div className="space-y-3">
+                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                  Contact Information
+                </span>
+
+                <div className="grid gap-2 text-sm">
                   <div className="flex items-center gap-2 group">
-                    <Globe className="h-4 w-4 text-accent-gold/70" />
+                    <Mail className="h-4 w-4 text-accent-gold/70" />
                     <a
-                      href={
-                        certification.website.startsWith("http")
-                          ? certification.website
-                          : `https://${certification.website}`
-                      }
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      href={`mailto:${certification.email}`}
                       className="hover:text-primary-green hover:underline truncate"
                     >
-                      {certification.website.replace(/^https?:\/\//, "")}
+                      {certification.email}
                     </a>
                   </div>
-                )}
+                  {certification.certifiedEmail && (
+                    <div className="flex items-center gap-2 group">
+                      <AtSign className="h-4 w-4 text-accent-gold/70" />
+                      <a
+                        href={`mailto:${certification.certifiedEmail}`}
+                        className="hover:text-primary-green hover:underline truncate text-xs italic"
+                      >
+                        {certification.certifiedEmail}{" "}
+                        <span className="text-[9px] not-italic font-bold bg-primary-green/10 px-1 rounded ml-1 text-primary-green">
+                          PEC
+                        </span>
+                      </a>
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2 group">
+                    <Phone className="h-4 w-4 text-accent-gold/70" />
+                    <a
+                      href={`tel:${certification.phoneNumber}`}
+                      className="hover:text-primary-green hover:underline"
+                    >
+                      {certification.phoneNumber}
+                    </a>
+                  </div>
+                  {certification.website && (
+                    <div className="flex items-center gap-2 group">
+                      <Globe className="h-4 w-4 text-accent-gold/70" />
+                      <a
+                        href={
+                          certification.website.startsWith("http")
+                            ? certification.website
+                            : `https://${certification.website}`
+                        }
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:text-primary-green hover:underline truncate"
+                      >
+                        {certification.website.replace(/^https?:\/\//, "")}
+                      </a>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
+            </CardContent>
+          </Card>
 
-            <Separator className="bg-light-green/10" />
+          {/* Security & Status Card */}
+          <Card className="shadow-sm border-light-green/20 overflow-hidden h-fit">
+            <CardHeader className="bg-primary-green/5 border-b border-light-green/10">
+              <CardTitle className="flex items-center text-primary-green">
+                <Lock className="mr-2 h-5 w-5 text-accent-gold" />
+                Security & Status
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-6 space-y-6">
+              <div className="flex justify-between items-center">
+                <div className="flex flex-col gap-1">
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                    Status
+                  </span>
+                  <div className="flex items-center">
+                    {certification.isExpired ? (
+                      <span className="flex items-center text-expired font-bold text-sm">
+                        <ShieldAlert className="mr-1 h-4 w-4" /> Expired
+                      </span>
+                    ) : (
+                      <span className="flex items-center text-valid font-bold text-sm">
+                        <ShieldCheck className="mr-1 h-4 w-4" /> Valid
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="flex flex-col gap-1 text-right">
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                    Code
+                  </span>
+                  <p className="font-mono text-xs font-bold text-primary-green">
+                    {certification.certificationCode}
+                  </p>
+                </div>
+              </div>
 
-            {/* Certification Info */}
-            <div className="grid grid-cols-1 gap-4">
-              <div className="flex flex-col gap-1">
+              <Separator className="bg-light-green/10" />
+
+              <div className="flex flex-col gap-2">
                 <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center">
-                  <Hash className="mr-1 h-3 w-3" /> Certification Code
+                  <Lock className="mr-1 h-3 w-3 text-accent-gold" /> Protection Date
                 </span>
-                <p className="font-mono text-xs bg-bg-cream/50 rounded-md border border-light-green/10 text-primary-green text-left">
-                  {certification.certificationCode}
+                <p className="text-sm font-medium">
+                  Locked until:{" "}
+                  {new Date(certification.deleteLockDate).toLocaleDateString(undefined, {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })}
                 </p>
+                <p className="text-[10px] text-muted-foreground leading-tight">
+                  This certification is protected and cannot be modified or deleted until the date
+                  above.
+                </p>
+              </div>
+
+              <Separator className="bg-light-green/10" />
+
+              <div className="flex flex-col gap-2">
+                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center">
+                  <Hash className="mr-1 h-3 w-3 text-accent-gold" /> Notarization Proof
+                </span>
+                <div className="bg-muted/30 p-2 rounded border border-light-green/5">
+                  <p className="text-[10px] font-mono break-all text-muted-foreground leading-relaxed">
+                    {certification.notarizationId}
+                  </p>
+                </div>
               </div>
 
               <div className="flex flex-col gap-1">
@@ -248,20 +311,9 @@ const CertificationDetail = () => {
                   })}
                 </p>
               </div>
-            </div>
-
-            <Separator className="bg-light-green/10" />
-
-            <div className="flex flex-col gap-1">
-              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center">
-                <div className="w-2 h-2 mr-1 rounded-full bg-accent-gold" /> Notarization ID
-              </span>
-              <p className="text-[10px] font-mono break-all text-muted-foreground bg-muted/30 p-2 rounded leading-relaxed">
-                {certification.notarizationId}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Oil Data Grid */}
         <Card className="lg:col-span-2 shadow-sm border-light-green/20 overflow-hidden">
