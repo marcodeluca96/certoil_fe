@@ -281,8 +281,11 @@ main {
 
 .cert-actions {
     display: flex;
+    width: 100%;
+    justify-content: space-around;
     gap: 0.75rem;
     padding-top: 1rem;
     border-top: 1px solid var(--border-light);
+    flex-wrap: wrap;
 }
 
