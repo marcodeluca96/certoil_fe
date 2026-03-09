@@ -24,6 +24,9 @@ import {
   ShieldCheck,
   ShieldAlert,
   Lock,
+  Download,
+  CheckCheck,
+  HistoryIcon,
 } from "lucide-react";
 import type { ActionButton } from "@/types";
 import { VerifyDocumentModal } from "@/components/VerifyDocumentModal";
@@ -128,7 +131,7 @@ const CertificationDetail = () => {
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
-        <div className="lg:col-span-1 space-y-8">
+        <div className="lg:col-span-2 space-y-8">
           {/* Company Identity Card */}
           <Card className="shadow-sm border-light-green/20 overflow-hidden h-fit">
             <CardHeader className="bg-primary-green/5 border-b border-light-green/10">
@@ -242,91 +245,131 @@ const CertificationDetail = () => {
               </div>
             </CardContent>
           </Card>
-
-          {/* Security & Status Card */}
-          <Card className="shadow-sm border-light-green/20 overflow-hidden h-fit">
-            <CardHeader className="bg-primary-green/5 border-b border-light-green/10">
-              <CardTitle className="flex items-center text-primary-green">
-                <Lock className="mr-2 h-5 w-5 text-accent-gold" />
-                Security & Status
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-6 space-y-6">
-              <div className="flex justify-between items-center">
-                <div className="flex flex-col gap-1">
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-                    Status
-                  </span>
-                  <div className="flex items-center">
-                    {certification.isExpired ? (
-                      <span className="flex items-center text-expired font-bold text-sm">
-                        <ShieldAlert className="mr-1 h-4 w-4" /> Expired
-                      </span>
-                    ) : (
-                      <span className="flex items-center text-valid font-bold text-sm">
-                        <ShieldCheck className="mr-1 h-4 w-4" /> Valid
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div className="flex flex-col gap-1 text-right">
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-                    Code
-                  </span>
-                  <p className="font-mono text-xs font-bold text-primary-green">
-                    {certification.certificationCode}
-                  </p>
-                </div>
-              </div>
-
-              <Separator className="bg-light-green/10" />
-
-              <div className="flex flex-col gap-2">
-                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center">
-                  <Lock className="mr-1 h-3 w-3 text-accent-gold" /> Protection Date
-                </span>
-                <p className="text-sm font-medium">
-                  Locked until:{" "}
-                  {new Date(certification.deleteLockDate).toLocaleDateString(undefined, {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  })}
-                </p>
-                <p className="text-[10px] text-muted-foreground leading-tight">
-                  This certification is protected and cannot be modified or deleted until the date
-                  above.
-                </p>
-              </div>
-
-              <Separator className="bg-light-green/10" />
-
-              <div className="flex flex-col gap-2">
-                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center">
-                  <Hash className="mr-1 h-3 w-3 text-accent-gold" /> Notarization Proof
-                </span>
-                <div className="bg-muted/30 p-2 rounded border border-light-green/5">
-                  <p className="text-[10px] font-mono break-all text-muted-foreground leading-relaxed">
-                    {certification.notarizationId}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center">
-                  <Calendar className="mr-1 h-3 w-3" /> Issued On
-                </span>
-                <p className="text-sm font-medium">
-                  {new Date(certification.certificationCreatedAt).toLocaleDateString(undefined, {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
         </div>
+
+        {/* Security & Status Card */}
+        <Card className="lg:col-span-1 space-y-8 shadow-sm border-light-green/20 overflow-hidden h-fit">
+          <CardHeader className="bg-primary-green/5 border-b border-light-green/10">
+            <CardTitle className="flex items-center text-primary-green">
+              <Lock className="mr-2 h-5 w-5 text-accent-gold" />
+              Security & Status
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex justify-between items-center">
+              <div className="flex flex-col gap-1">
+                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                  Status
+                </span>
+                <div className="flex items-center">
+                  {certification.isExpired ? (
+                    <span className="flex items-center text-expired font-bold text-sm">
+                      <ShieldAlert className="mr-1 h-4 w-4" /> Expired
+                    </span>
+                  ) : (
+                    <span className="flex items-center text-valid font-bold text-sm">
+                      <ShieldCheck className="mr-1 h-4 w-4" /> Valid
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className="flex flex-col gap-1 text-right">
+                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                  Code
+                </span>
+                <p className="font-mono text-xs font-bold text-primary-green">
+                  {certification.certificationCode}
+                </p>
+              </div>
+            </div>
+
+            <Separator className="bg-light-green/10" />
+
+            <div className="flex flex-col gap-2">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center">
+                <Lock className="mr-1 h-3 w-3 text-accent-gold" /> Protection Date
+              </span>
+              <p className="text-sm font-medium">
+                Locked until:{" "}
+                {new Date(certification.deleteLockDate).toLocaleDateString(undefined, {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
+              </p>
+              <p className="text-[10px] text-muted-foreground leading-tight">
+                This certification is protected and cannot be modified or deleted until the date
+                above.
+              </p>
+            </div>
+
+            <Separator className="bg-light-green/10" />
+
+            <div className="flex flex-col gap-2">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center">
+                <Hash className="mr-1 h-3 w-3 text-accent-gold" /> Notarization Proof
+              </span>
+              <div className="bg-muted/30 p-2 rounded border border-light-green/5">
+                <p className="text-[10px] font-mono break-all text-muted-foreground leading-relaxed">
+                  {certification.notarizationId}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center">
+                <Calendar className="mr-1 h-3 w-3" /> Issued On
+              </span>
+              <p className="text-sm font-medium">
+                {new Date(certification.certificationCreatedAt).toLocaleDateString(undefined, {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="lg:col-span-1 space-y-8 shadow-sm border-light-green/20 overflow-hidden h-fit">
+          <CardHeader className="bg-primary-green/5 border-b border-light-green/10">
+            <CardTitle className="flex items-center text-primary-green">
+              <FileText className="mr-2 h-5 w-5 text-accent-gold" />
+              Documents
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex flex-col gap-2">
+              <Button
+                variant="default"
+                size="sm"
+                className="w-full"
+                onClick={() => window.open(certification.certificatePath, "_blank")}
+              >
+                <Download className="mr-2 h-4 w-4" />
+                Certificate
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full"
+                onClick={() => setIsVerifyModalOpen(true)}
+              >
+                <CheckCheck className="mr-2 h-4 w-4" />
+                Verify on IOTA
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full"
+                onClick={() => navigate(`/history-cert-by-company/${certification.companyId}`)}
+              >
+                <HistoryIcon className="mr-2 h-4 w-4" />
+                History
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Oil Data Grid */}
         <Card className="lg:col-span-2 shadow-sm border-light-green/20 overflow-hidden">
