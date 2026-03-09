@@ -19,7 +19,7 @@ function App() {
           <Route path="/new-certificazione" element={<NewCertificazionePage />} />
           <Route path="/certificazioni/:id" element={<CertificationDetail />} />
           <Route
-            path="/history-cert-by-company/:companyId"
+            path="/certificazioni/:id/history-cert-by-company/:companyId"
             element={<HistoryCertByCompanyPage />}
           />
         </Routes>

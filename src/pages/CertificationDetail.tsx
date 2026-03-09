@@ -362,7 +362,11 @@ const CertificationDetail = () => {
                 variant="outline"
                 size="sm"
                 className="w-full"
-                onClick={() => navigate(`/history-cert-by-company/${certification.companyId}`)}
+                onClick={() =>
+                  navigate(
+                    `/certificazioni/${id}/history-cert-by-company/${certification.companyId}`,
+                  )
+                }
               >
                 <HistoryIcon className="mr-2 h-4 w-4" />
                 History

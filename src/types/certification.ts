@@ -65,3 +65,18 @@ export interface LockMetadataResponse {
     };
   };
 }
+
+export interface CertificationHistoryResponse {
+  success: boolean;
+  message: string;
+  data: {
+    companyId: number;
+    companyName: string;
+    certificationId: number;
+    certificationCode: string;
+    certificationCreatedAt: string;
+    certificatePath: string;
+    certificationNote: string | null;
+    certificationExpiryDate: string;
+  }[];
+}
