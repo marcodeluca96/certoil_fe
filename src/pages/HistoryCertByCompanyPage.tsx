@@ -8,6 +8,15 @@ import type { CertificationHistoryResponse } from "@/types/certification";
 import { toast } from "sonner";
 import { API_URL } from "@/store/consts";
 import { SpinnerLoading } from "@/components/SpinnerLoading";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { FileText } from "lucide-react";
 
 const HistoryCertByCompanyPage = () => {
   const navigate = useNavigate();
@@ -78,6 +87,59 @@ const HistoryCertByCompanyPage = () => {
         }
         actionBtns={[]}
       />
+
+      <div className="mt-8 bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+        <Table>
+          <TableHeader className="bg-slate-50/50">
+            <TableRow>
+              <TableHead className="font-semibold text-slate-700">Certification Code</TableHead>
+              <TableHead className="font-semibold text-slate-700">Created At</TableHead>
+              <TableHead className="font-semibold text-slate-700">Expiry Date</TableHead>
+              <TableHead className="font-semibold text-slate-700">Notes</TableHead>
+              <TableHead className="font-semibold text-slate-700 text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {certificationHistory.data.map((cert) => (
+              <TableRow
+                key={cert.certificationId}
+                className="hover:bg-slate-50/50 transition-colors"
+              >
+                <TableCell className="font-medium text-primary-green">
+                  {cert.certificationCode}
+                </TableCell>
+                <TableCell>
+                  {new Date(cert.certificationCreatedAt).toLocaleDateString("it-IT", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })}
+                </TableCell>
+                <TableCell>
+                  {new Date(cert.certificationExpiryDate).toLocaleDateString("it-IT", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })}
+                </TableCell>
+                <TableCell className="max-w-[200px] truncate" title={cert.certificationNote || ""}>
+                  {cert.certificationNote || "-"}
+                </TableCell>
+                <TableCell className="text-right">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-primary-green text-primary-green hover:bg-primary-green hover:text-white cursor-pointer"
+                    onClick={() => window.open(cert.certificatePath, "_blank")}
+                  >
+                    <FileText className="mr-2 h-4 w-4" /> View Certificate
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 };
