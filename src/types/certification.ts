@@ -36,6 +36,7 @@ export interface CertificationResponse {
   success: boolean;
   message: string;
   data: Certification[];
+  totalCount: number;
 }
 
 export interface CertificationState {
@@ -46,6 +47,7 @@ export interface CertificationState {
   error: string | null;
   currentPage: number;
   pageSize: number;
+  totalCount: number;
 }
 
 export interface LockMetadataResponse {

@@ -15,6 +15,7 @@ const initialState: CertificationState = {
   error: null,
   currentPage: 1,
   pageSize: 10,
+  totalCount: 0,
 };
 
 export const fetchCertifications = createAsyncThunk(
@@ -24,7 +25,7 @@ export const fetchCertifications = createAsyncThunk(
       const response = await axios.get<CertificationResponse>(
         `${API_URL}/api/certifications?page=${page}&limit=${limit}`,
       );
-      return { items: response.data.data, page, limit };
+      return { items: response.data.data, page, limit, totalCount: response.data.totalCount };
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || "Failed to fetch certifications");
     }
@@ -59,6 +60,7 @@ const certificationSlice = createSlice({
         state.items = action.payload.items;
         state.currentPage = action.payload.page;
         state.pageSize = action.payload.limit;
+        state.totalCount = action.payload.totalCount;
       })
       .addCase(fetchCertifications.rejected, (state, action) => {
         state.loading = false;
