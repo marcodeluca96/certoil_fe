@@ -79,32 +79,21 @@ const CertificationDetail = () => {
     );
   }
 
-  // const isValid = (notarizationId: string): "valid" | "expired" | "not-found" => {
-  //   const data = lockMetadata.find((item) => item.notarizationId === notarizationId);
-  //   if (!data) {
-  //     return "not-found";
-  //   }
-  //   //se deleteLockDate converted to date is minor than today is expired
-  //   if (new Date(data.deleteLockDate).getTime() < Date.now()) {
-  //     return "expired";
-  //   }
-  //   return "valid";
-  // };
-
-  const actionBtns: ActionButton[] = [
-    {
-      label: "Verify Document",
-      onClick: () => setIsVerifyModalOpen(true),
-      variant: "outline",
-      size: "default",
-    },
-    {
-      label: "Show Certificate",
-      onClick: () => window.open(certification.certificatePath, "_blank"),
-      variant: "default",
-      size: "default",
-    },
-  ];
+  const actionBtns: ActionButton[] = [];
+  // [
+  //   {
+  //     label: "Verify Document",
+  //     onClick: () => setIsVerifyModalOpen(true),
+  //     variant: "outline",
+  //     size: "default",
+  //   },
+  //   {
+  //     label: "Show Certificate",
+  //     onClick: () => window.open(certification.certificatePath, "_blank"),
+  //     variant: "default",
+  //     size: "default",
+  //   },
+  // ];
 
   return (
     <div className="container mx-auto py-8 px-4">
