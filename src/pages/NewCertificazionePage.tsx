@@ -5,13 +5,13 @@ import { FieldGroup, FieldSet, Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
+// import {
+//   Select,
+//   SelectTrigger,
+//   SelectValue,
+//   SelectContent,
+//   SelectItem,
+// } from "@/components/ui/select";
 
 import { useMemo, useRef, useState } from "react";
 import { API_URL } from "@/store/consts";
@@ -27,8 +27,8 @@ const MAX_FILE_BYTES = MAX_FILE_MB * 1024 * 1024;
 const ACCEPTED_MIME = ["application/pdf"] as const;
 const ACCEPT_ATTR = ".pdf";
 
-type Scheme = "EVOO" | "BIO" | "DOP" | "IGP" | "ALTRO";
-type ProductClass = "extravergine" | "vergine" | "biologico" | "dop" | "igp";
+// type Scheme = "EVOO" | "BIO" | "DOP" | "IGP" | "ALTRO";
+// type ProductClass = "extravergine" | "vergine" | "biologico" | "dop" | "igp";
 
 type OilDataItem = {
   name: string;
@@ -114,8 +114,8 @@ export default function NewCertificazionePage() {
   const navigate = useNavigate();
 
   // ===== (You still have these, UI can keep them; not sent in new payload) =====
-  const [scheme, setScheme] = useState<Scheme>("EVOO");
-  const [productClass, setProductClass] = useState<ProductClass>("extravergine");
+  // const [scheme, setScheme] = useState<Scheme>("EVOO");
+  // const [productClass, setProductClass] = useState<ProductClass>("extravergine");
   const [issuedAt, setIssuedAt] = useState(todayYYYYMMDD());
 
   // ===== Oil analysis (used for oilData) =====
@@ -153,15 +153,15 @@ export default function NewCertificazionePage() {
   const [submitError, setSubmitError] = useState("");
 
   /** Example business rule */
-  const acidityBusinessError = useMemo(() => {
-    if (productClass !== "extravergine") return "";
-    const acidityRow = oilMeasurements.find((m) => m.name.toLowerCase().includes("acidit"));
-    if (!acidityRow) return "";
-    const a = Number(acidityRow.value);
-    if (!Number.isFinite(a)) return "";
-    if (a > 0.8) return "For extra virgin olive oil, acidity must be ≤ 0.8%";
-    return "";
-  }, [oilMeasurements, productClass]);
+  // const acidityBusinessError = useMemo(() => {
+  //   if (productClass !== "extravergine") return "";
+  //   const acidityRow = oilMeasurements.find((m) => m.name.toLowerCase().includes("acidit"));
+  //   if (!acidityRow) return "";
+  //   const a = Number(acidityRow.value);
+  //   if (!Number.isFinite(a)) return "";
+  //   if (a > 0.8) return "For extra virgin olive oil, acidity must be ≤ 0.8%";
+  //   return "";
+  // }, [oilMeasurements, productClass]);
 
   function clearError(key: string) {
     setErrors((prev) => {
@@ -224,7 +224,7 @@ export default function NewCertificazionePage() {
       e["oil.data"] = "Please fill in all measurement names and values or remove empty rows.";
     }
 
-    if (acidityBusinessError) e["oil.data"] = acidityBusinessError;
+    // if (acidityBusinessError) e["oil.data"] = acidityBusinessError;
 
     // Company data required
     if (!companyName.trim()) e["company.companyName"] = "Company name is required";
@@ -387,10 +387,11 @@ export default function NewCertificazionePage() {
                     type="date"
                     value={issuedAt}
                     onChange={(e) => setIssuedAt(e.target.value)}
+                    disabled
                   />
                 </Field>
 
-                <Field>
+                {/* <Field>
                   <FieldLabel htmlFor="scheme">Scheme</FieldLabel>
                   <Select value={scheme} onValueChange={(v) => setScheme(v as Scheme)}>
                     <SelectTrigger id="scheme">
@@ -404,9 +405,9 @@ export default function NewCertificazionePage() {
                       <SelectItem value="ALTRO">OTHER</SelectItem>
                     </SelectContent>
                   </Select>
-                </Field>
+                </Field> */}
 
-                <Field>
+                {/* <Field>
                   <FieldLabel htmlFor="productClass">Product Class</FieldLabel>
                   <Select
                     value={productClass}
@@ -423,7 +424,7 @@ export default function NewCertificazionePage() {
                       <SelectItem value="igp">IGP</SelectItem>
                     </SelectContent>
                   </Select>
-                </Field>
+                </Field> */}
               </FieldGroup>
             </FieldSet>
           </section>
@@ -510,11 +511,11 @@ export default function NewCertificazionePage() {
 
               <ErrorText msg={errors["oil.data"]} />
 
-              {acidityBusinessError && (
+              {/* {acidityBusinessError && (
                 <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-amber-900 text-sm">
                   ⚠️ {acidityBusinessError}
                 </div>
-              )}
+              )} */}
             </FieldSet>
           </section>
 
